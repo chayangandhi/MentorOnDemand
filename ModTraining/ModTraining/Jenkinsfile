@@ -1,0 +1,81 @@
+pipeline {
+    agent any
+    
+    stages {
+
+        stage('Initialize'){
+                def dockerHome = tool 'mydocker'
+                env.PATH = "${dockerHome}:${env.PATH}"
+        }
+
+        stage('Build') {
+            steps {
+                sh 'mvn -B -DskipTests clean package'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+       
+         stage('Publish') {
+             steps {pipeline {
+    agent any
+    
+    stages {
+
+        stage('Initialize'){
+                def dockerHome = tool 'mydocker'
+                env.PATH = "${dockerHome}:${env.PATH}"
+        }
+
+        stage('Build') {
+            steps {
+                sh 'mvn -B -DskipTests clean package'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+       
+         stage('Publish') {
+             steps {
+                echo 'Starting to build docker image!!'
+
+                script {
+                     withDockerRegistry([credentialsId: 'docker_credentials', url: 'docker.io/kunalpuri']) {
+                        def customImage = docker.build("kunalpuri/modtraining:latest")
+                        customImage.push()
+                     }
+                  
+                }
+            }
+        }
+    }
+}
+             
+                echo 'Starting to build docker image!!'
+
+                script {
+                    // withDockerRegistry([credentialsId: 'rahulkumar19', url: 'docker.io/chayangandhi']) {
+                        def customImage = docker.build("chayangandhi/smcapp-img:latest")
+                        customImage.push()
+                    // }
+                  
+                }
+            }
+        }
+    }
+}

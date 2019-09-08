@@ -1,7 +1,7 @@
 FROM openjdk:latest
 
 # Add Maintainer Info
-LABEL maintainer="purikunal22@gmail.com"
+LABEL maintainer="gandhichayan97@gmail.com"
 
 
 ADD target/ModEurekaServer.jar ModEurekaServer.jar
